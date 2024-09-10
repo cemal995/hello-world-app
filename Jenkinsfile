@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/cemal995/hello-world-app.git'
+                git branch: 'main', url: 'https://github.com/cemal995/hello-world-app.git'
             }
         }
 
