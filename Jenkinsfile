@@ -8,18 +8,31 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Run with Docker Compose') {
             steps {
                 script {
-                    docker.build('hello-world-app')
+                    // Define the Docker Compose file path
+                    def composeFile = 'docker-compose.yml'
+
+                    // Run Docker Compose to build and start the containers
+                    sh "docker-compose -f ${composeFile} up --build -d"
                 }
             }
         }
 
-        stage('Deploy Docker Container') {
+        stage('Run Tests') {
             steps {
                 script {
-                    docker.image('hello-world-app').run('-p 3000:3000')
+                    // Here you can add steps to run your tests if needed
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Optionally, you can add cleanup steps to stop and remove containers
+                    sh "docker-compose -f docker-compose.yml down"
                 }
             }
         }
