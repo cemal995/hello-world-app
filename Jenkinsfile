@@ -4,7 +4,7 @@ pipeline {
     environment {
         JIRA_SITE = 'my-jira-site' // The name of your Jira site configuration in Jenkins
         JIRA_CREDENTIALS_ID = 'jira-api-token' // Your Jenkins credentials ID for Jira API token
-        JIRA_ISSUE_KEY = ''
+        JIRA_ISSUE_KEY = '' // To be set after issue creation
     }
 
     stages {
@@ -19,15 +19,15 @@ pipeline {
                             issuetype: [name: 'Task'] // Replace with your issue type
                         ]
                     ]
-                    
+
                     def response = httpRequest(
-                        url: 'https://cemalhan99.atlassian.net/rest/api/2/issue',
+                        url: 'https://your-jira-instance.atlassian.net/rest/api/2/issue',
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         authentication: "${env.JIRA_CREDENTIALS_ID}",
                         requestBody: groovy.json.JsonOutput.toJson(issueData)
                     )
-                    
+
                     def jsonResponse = readJSON text: response.content
                     env.JIRA_ISSUE_KEY = jsonResponse.key
                 }
