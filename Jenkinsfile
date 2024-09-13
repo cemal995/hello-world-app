@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
+        JIRA_PROJECT_KEY = 'NODE'
         JIRA_ISSUE_KEY = 'NODE-1'
-        JIRA_CREDENTIALS_ID = 'jira-api-token'  // Your Jenkins credentials ID for the Jira API token
+        JIRA_SITE = 'my-jira-site' // Name of the Jira site configured in Jenkins
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
                     
                     // Add a comment to the Jira issue indicating build started
                     withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
+                        jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
                     }
                 }
             }
@@ -35,7 +36,7 @@ pipeline {
                     
                     // Add a comment to the Jira issue indicating successful deployment
                     withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
+                        jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
                     }
                 }
             }
@@ -46,7 +47,7 @@ pipeline {
                 script {
                     // Transition the Jira issue to 'Done'
                     withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraTransitionIssue(issueKey: "${env.JIRA_ISSUE_KEY}", transition: 'Done')  // Use the correct transition name or ID
+                        jiraTransitionIssue site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", transition: 'Done'
                     }
                 }
             }
@@ -58,9 +59,11 @@ pipeline {
             script {
                 // In case of failure, comment on the Jira issue
                 withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                    jiraComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
+                    jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
                 }
             }
         }
     }
 }
+
+
