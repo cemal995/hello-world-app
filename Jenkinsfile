@@ -84,4 +84,8 @@ pipeline {
         failure {
             script {
                 // In case of a failure, comment on the Jira issue
-                jiraComment site: "${env.JIRA_SITE}", 
+                jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
+            }
+        }
+    }
+}
