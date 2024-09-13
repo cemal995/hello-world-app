@@ -57,7 +57,7 @@ pipeline {
                 script {
                     // Transition the Jira issue to 'Done'
                     withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraIssueTransition(
+                        jiraTransitionIssue(
                             site: 'YourJiraSite', 
                             issueKey: "${env.JIRA_ISSUE_KEY}", 
                             transition: 'Done',  // Replace with the actual transition ID or name for 'Done'
