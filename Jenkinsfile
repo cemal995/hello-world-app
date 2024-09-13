@@ -4,7 +4,7 @@ pipeline {
     environment {
         JIRA_SITE = 'my-jira-site' // The name of your Jira site configuration in Jenkins
         JIRA_CREDENTIALS_ID = 'jira-api-token' // Your Jenkins credentials ID for Jira API token
-        JIRA_ISSUE_KEY = 'NODE-3'
+        JIRA_ISSUE_KEY = 'NODE-4'
     }
 
     stages {
@@ -21,7 +21,7 @@ pipeline {
                     sh 'docker compose up --build -d'
                     
                     // Add a comment to the Jira issue indicating build started
-                    jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
+                    jiraAddComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
                     sh 'docker compose up -d'
                     
                     // Add a comment to the Jira issue indicating deployment
-                    jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
+                    jiraAddComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
                 }
             }
         }
@@ -52,7 +52,7 @@ pipeline {
         failure {
             script {
                 // In case of a failure, comment on the Jira issue
-                jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
+                jiraAddComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
             }
         }
     }
