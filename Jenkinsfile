@@ -21,7 +21,7 @@ pipeline {
                     ]
 
                     def response = httpRequest(
-                        url: 'https://your-jira-instance.atlassian.net/rest/api/2/issue',
+                        url: 'https://cemalhan99.atlassian.net/rest/api/2/issue',
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         authentication: "${env.JIRA_CREDENTIALS_ID}",
