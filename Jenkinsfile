@@ -5,6 +5,7 @@ pipeline {
         JIRA_PROJECT_KEY = 'NODE'
         JIRA_ISSUE_KEY = 'NODE-1'
         JIRA_SITE = 'my-jira-site' // Name of the Jira site configured in Jenkins
+        JIRA_CREDENTIALS_ID = 'jira-api-token' // ID of the credentials configured in Jenkins
     }
 
     stages {
