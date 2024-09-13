@@ -4,6 +4,7 @@ pipeline {
     environment {
         JIRA_PROJECT_KEY = 'NODE'
         JIRA_ISSUE_KEY = 'NODE-1'
+        JIRA_CREDENTIALS_ID = 'jira-api-token'  // Update with your Jenkins credentials ID for Jira
     }
 
     stages {
@@ -16,11 +17,17 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Build your application, e.g., using Docker Compose
+                    // Build the application using Docker Compose
                     sh 'docker compose up --build -d'
                     
-                    // Add a comment to the Jira issue indicating build started
-                    jiraIssueComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
+                    // Add a comment to the Jira issue indicating that the build started
+                    withCredentials([usernamePassword(credentialsId: "${env.JIRA_CREDENTIALS_ID}", usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_TOKEN')]) {
+                        jiraComment(
+                            site: 'YourJiraSite', // Replace with your Jira site name configured in Jenkins
+                            issueKey: "${env.JIRA_ISSUE_KEY}", 
+                            body: 'Build started for the application.'
+                        )
+                    }
                 }
             }
         }
@@ -28,11 +35,17 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy application, for example using Docker
+                    // Deploy the application
                     sh 'docker compose up -d'
                     
-                    // Add a comment to the Jira issue indicating deployment
-                    jiraIssueComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
+                    // Add a comment to the Jira issue indicating successful deployment
+                    withCredentials([usernamePassword(credentialsId: "${env.JIRA_CREDENTIALS_ID}", usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_TOKEN')]) {
+                        jiraComment(
+                            site: 'YourJiraSite', 
+                            issueKey: "${env.JIRA_ISSUE_KEY}", 
+                            body: 'Deployment completed successfully.'
+                        )
+                    }
                 }
             }
         }
@@ -40,8 +53,14 @@ pipeline {
         stage('Close Jira Issue') {
             steps {
                 script {
-                    // Transition the Jira issue to "Done" (or any status)
-                    jiraIssueUpdate issueKey: "${env.JIRA_ISSUE_KEY}", transition: 'Done'
+                    // Transition the Jira issue to 'Done'
+                    withCredentials([usernamePassword(credentialsId: "${env.JIRA_CREDENTIALS_ID}", usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_TOKEN')]) {
+                        jiraIssueTransition(
+                            site: 'YourJiraSite', 
+                            issueKey: "${env.JIRA_ISSUE_KEY}", 
+                            transition: 'Done'  // Replace with the actual transition ID or name for 'Done'
+                        )
+                    }
                 }
             }
         }
@@ -50,14 +69,15 @@ pipeline {
     post {
         failure {
             script {
-                // In case of a failure, comment on the Jira issue
-                jiraIssueComment issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
+                // In case of failure, comment on the Jira issue
+                withCredentials([usernamePassword(credentialsId: "${env.JIRA_CREDENTIALS_ID}", usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_TOKEN')]) {
+                    jiraComment(
+                        site: 'YourJiraSite', 
+                        issueKey: "${env.JIRA_ISSUE_KEY}", 
+                        body: 'The build or deployment has failed.'
+                    )
+                }
             }
         }
     }
 }
-
-
-
-
-
