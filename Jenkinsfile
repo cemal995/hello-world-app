@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        JIRA_SITE = 'my-jira-site' // The Jira site name configured in Jenkins
-        JIRA_CREDENTIALS_ID = 'jira-api-token' // The credentials ID for Jira API token
-        JIRA_ISSUE_KEY = 'NODE-1' // Your Jira issue key
+        JIRA_SITE = 'my-jira-site' // The name of your Jira site configuration in Jenkins
+        JIRA_CREDENTIALS_ID = 'jira-api-token' // Your Jenkins credentials ID for Jira API token
+        JIRA_ISSUE_KEY = 'NODE-1'
     }
 
     stages {
@@ -17,11 +17,11 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+                    // Build your application using Docker Compose
                     sh 'docker compose up --build -d'
                     
-                    withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
-                    }
+                    // Add a comment to the Jira issue indicating build started
+                    jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Build started for the application.'
                 }
             }
         }
@@ -29,11 +29,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    // Deploy application using Docker
                     sh 'docker compose up -d'
                     
-                    withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
-                    }
+                    // Add a comment to the Jira issue indicating deployment
+                    jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'Deployment completed successfully.'
                 }
             }
         }
@@ -41,9 +41,8 @@ pipeline {
         stage('Close Jira Issue') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                        jiraTransitionIssue site: "${env.JIRA_SITE}", idOrKey: "${env.JIRA_ISSUE_KEY}", input: [transition: 'Done']
-                    }
+                    // Transition the Jira issue to "Done"
+                    jiraTransitionIssue site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", idOrKey: "${env.JIRA_ISSUE_KEY}", input: [transition: '31']
                 }
             }
         }
@@ -52,13 +51,13 @@ pipeline {
     post {
         failure {
             script {
-                withCredentials([string(credentialsId: "${env.JIRA_CREDENTIALS_ID}", variable: 'JIRA_API_TOKEN')]) {
-                    jiraComment site: "${env.JIRA_SITE}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
-                }
+                // In case of a failure, comment on the Jira issue
+                jiraComment site: "${env.JIRA_SITE}", credentialsId: "${env.JIRA_CREDENTIALS_ID}", issueKey: "${env.JIRA_ISSUE_KEY}", comment: 'The build or deployment has failed.'
             }
         }
     }
 }
+
 
 
 
