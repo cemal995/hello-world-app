@@ -1,17 +1,21 @@
 # Hello World App
 
-This is a simple Node.js application that returns "Hello World!" on the `/` route.
+A simple web application that integrates with a MySQL database and supports Docker and Jenkins for CI/CD.
 
-## Requirements
+## Features
+
+- **Subscription Form**: Users can submit their name, username, and email, which are stored in a MySQL database.
+- **CI/CD Pipeline**: Integrated with Jenkins for automated builds, deployments, and Jira updates.
+- **Dockerized Setup**: Both the web app and MySQL run in Docker containers using Docker Compose.
+
+## Documentation
+
+For detailed setup and deployment instructions, please refer to the [documentation](./docs/Hello-World-App_Documentation.pdf).
+
+## Tech Stack
+
 - Node.js
-- Docker
-- Jenkins (for CI/CD)
-
-## Running the app locally
-1. Install dependencies: `npm install`
-2. Run the app: `npm start`
-3. Visit `http://localhost:3000` to see the "Hello World!" message.
-
-## Running the app with Docker
-1. Build the Docker image: `docker build -t hello-world-app .`
-2. Run the Docker container: `docker run -p 3000:3000 hello-world-app`
+- MySQL
+- Docker & Docker Compose
+- Jenkins
+- Jira Integration
