@@ -4,7 +4,7 @@ pipeline {
     environment {
         JIRA_SITE = 'my-jira-site' 
         JIRA_CREDENTIALS_ID = 'jira-api-token' 
-        JIRA_ISSUE_KEY = 'NODE-6'
+        JIRA_ISSUE_KEY = 'NODE-7'
     }
 
     stages {
